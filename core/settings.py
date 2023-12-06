@@ -117,12 +117,10 @@ WSGI_APPLICATION = "core.wsgi.application"
 #     }
 # }
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+DATABASES = {
+    'default': dj_database_url.config(default=env('DATABASE_URL'))
+}
 
 
 # if DEVELOPMENT_MODE is True:
