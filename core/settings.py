@@ -118,18 +118,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 # }
 
 
-DATABASES = {
-    'default': dj_database_url.config(default=env('DATABASE_URL'))
-}
+
 
 
 # if DEVELOPMENT_MODE is True:
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }  
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}  
 # elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 #     if env('DATABASE_URL', None) is None:
 #         raise Exception('RDS_DB_NAME not found in os.environ')
@@ -138,6 +136,8 @@ DATABASES = {
 #         }
     
 
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
