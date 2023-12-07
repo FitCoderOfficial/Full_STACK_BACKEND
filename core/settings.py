@@ -4,6 +4,7 @@ import environ
 import sys
 import dj_database_url
 import django_heroku
+import os 
 
 
 
@@ -105,15 +106,19 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'FullAuth_API',
+#         'USER': 'master',
+#         'PASSWORD': 'toqur9393!!',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'FullAuth_API',
-        'USER': 'master',
-        'PASSWORD': 'toqur9393!!',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 db_from_env = dj_database_url.config(conn_max_age=500)
@@ -121,12 +126,12 @@ DATABASES['default'].update(db_from_env)
 
 
 # if DEVELOPMENT_MODE is True:
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}  
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }  
 # elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 #     if env('DATABASE_URL', None) is None:
 #         raise Exception('RDS_DB_NAME not found in os.environ')
