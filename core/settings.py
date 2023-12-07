@@ -5,8 +5,7 @@ import sys
 import dj_database_url
 import django_heroku
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+
 
 env = environ.Env(
     DEBUG=(bool, True)
@@ -312,3 +311,5 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:8000"]
 
 
 
+# Activate Django-Heroku.
+django_heroku.settings(locals())
