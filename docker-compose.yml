@@ -1,24 +1,54 @@
-version: '3.11'
+version: '3.8'
 services:
-  backend:
-    container_name: django-backend
-    build: .
-    volumes: 
-      - ./:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
   db:
-    container_name: postgres-container
     image: postgres
-    environment:
-      - POSTGRES_PASSWORD=master
-      - POSTGRES_USER=master
-      - POSTGRES_DB=main_db
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: main_db
+      POSTGRES_USER: master
+      POSTGRES_PASSWORD: master
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    environment:
+      VIRTUAL_HOST: goldcoinmaker.com
+      LETSENCRYPT_HOST: goldcoinmaker.com
+      LETSENCRYPT_EMAIL: master@goldcoinmaker.com
+    depends_on:
+      - db
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+    labels:
+      - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
+
+  letsencrypt:
+    image: nginxproxy/acme-companion
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 volumes:
   postgres_data:
+  certs:
+  html:
+  vhost:
+  acme:
